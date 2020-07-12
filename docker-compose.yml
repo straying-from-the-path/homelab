@@ -1,0 +1,98 @@
+version: "3.8"
+
+services:
+   weewx:
+    image: felddy/weewx
+    container_name: weewx
+    init: true
+    restart: "yes"
+    volumes:
+      - /appdata/weewx:/data
+    environment:
+      - TIMEZONE=US/Western
+      - WEEWX_UID=1003
+      - WEEWX_GID=1003
+    restart: unless-stopped
+
+   unifi-controller:
+    image: linuxserver/unifi-controller
+    container_name: unifi-controller
+    environment:
+      - PUID=1000
+      - PGID=1000
+     # - MEM_LIMIT=1024M #optional
+    volumes:
+      - /appdata/unifi-controller:/config
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8443:8443
+      - 1900:1900/udp #optional
+      - 8843:8843 #optional
+      - 8880:8880 #optional
+      - 6789:6789 #optional
+      - 5514:5514 #optional
+    restart: unless-stopped
+
+   ntp:
+    image: cturra/ntp:latest
+    container_name: ntp
+    restart: always
+    ports:
+      - 123:123/udp
+    cap_add:
+      - SYS_NICE
+      - SYS_RESOURCE
+      - SYS_TIME
+    environment:
+      - NTP_SERVERS=time.cloudflare.com
+    restart: unless-stopped
+
+   homebridge:
+    image: oznu/homebridge:latest
+    container_name: homebridge
+    #network_mode: host
+    environment:
+      - TZ=America/Los_Angeles
+      - PGID=1001
+      - PUID=1001
+      - HOMEBRIDGE_CONFIG_UI=1
+      - HOMEBRIDGE_CONFIG_UI_PORT=8085
+    volumes:
+      - /appdata/homebridge:/homebridge
+    restart: unless-stopped
+  
+   influxdb-grafana:
+    image: philhawthorne/docker-influxdb-grafana:latest
+    container_name: influxdb-grafana
+    volumes:
+      - /appdata/influxdb-grafana/influxdb:/var/lib/influxdb
+      - /appdata/influxdb-grafana/grafana:/var/lib/grafana
+    ports: 
+      - 3003:3003 # grafana
+      - 3004:8083 # chronograf
+      - 8086:8086 # influxdb
+    restart: unless-stopped
+
+   boinc:
+    image: linuxserver/boinc
+    container_name: boinc
+    environment:
+      - PUID=1002
+      - PGID=1002
+      - TZ=America/Los_Angeles
+      - GUAC_USER=abc #optional
+      - GUAC_PASS=Azz1noth #optional
+    volumes:
+      - /appdata/boinc:/config
+    ports:
+      - 8087:8080
+    devices:
+      - /dev/dri:/dev/dri
+    restart: unless-stopped
+
+networks:
+  default: # make this the default network for all containers
+    external: true 
+    name: homelab-bridge
