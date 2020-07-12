@@ -52,7 +52,7 @@ services:
    homebridge:
     image: oznu/homebridge:latest
     container_name: homebridge
-    #network_mode: host
+    network_mode: host
     environment:
       - TZ=America/Los_Angeles
       - PGID=1001
