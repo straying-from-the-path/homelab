@@ -83,7 +83,7 @@ services:
       - PGID=1002
       - TZ=America/Los_Angeles
       - GUAC_USER=abc #optional
-      - GUAC_PASS=Azz1noth #optional
+      - GUAC_PASS=abc123 #optional
     volumes:
       - /appdata/boinc:/config
     ports:
