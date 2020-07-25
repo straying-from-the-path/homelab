@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
    weewx:
-    image: felddy/weewx
+    image: strayingfromthepath/weewx-weatherflow
     container_name: weewx
     init: true
     restart: "yes"
@@ -83,7 +83,7 @@ services:
       - PGID=1002
       - TZ=America/Los_Angeles
       - GUAC_USER=abc #optional
-      - GUAC_PASS=abc123 #optional
+      - GUAC_PASS=71532f621790f0946eb3efa47b8e6aab #optional
     volumes:
       - /appdata/boinc:/config
     ports:
